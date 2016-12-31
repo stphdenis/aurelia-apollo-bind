@@ -7,7 +7,7 @@ Any time a parameter change, a new query is done.
 
 ## Initialisation
 
-You have to inject an instance of ApolloClient :
+You have to inject an instance of `ApolloClient` :
 
 ```typescript
 import { Container } from 'aurelia-dependency-injection';
@@ -40,7 +40,7 @@ By just changing `query` by `subscribe`, your query will be updated each time an
 
 ## Parameters
 
-Each time you change the contactId, a new query is done.
+Each time you change the `detailsId` property, a new query is done.
 
 ```typescript
 import { ApolloBind } from 'aurelia-apollo-bind';
@@ -63,14 +63,14 @@ query contactDetails($id: ID) {
 
  - Parameter can be an object
  - subscribe is locally only
- - make update similar to the query way with save() and revert() functionalities.
+ - make update similar to the query way with `save` and `revert` functionalities.
 
 ## Update proposition
 
 This is not yet implemented but I need your reactions to make something easy to use and having all the needs.
 
-We can bind functions with the module named contactSave(newData and oldData) and contactRevert().
-The save() is called with no-parameter but newData and oldData are transmitted by the module.
+We can bind functions with the module named `contactSave(newData and oldData)` and `contactRevert()`.
+The `save()` is called with no-parameter but `newData` and `oldData` are transmitted by the module.
 
 ```typescript
 export class contactDetails {
@@ -92,9 +92,12 @@ mutation saveContact($id: ID, ...) {
     if ... detailsSave() ... else ... detailsRevert() ...
   }
 
-  detailsSave(newData, oldData) {
-    console.info('newData, oldData :', newData, oldData);
+  detailsSave(datas: Promise<{newData, oldData}>) {
+    datas.then(datas => console.info('newData, oldData :', datas.newData, datas.oldData));
   }
   detailsRevert() {}
 }
 ```
+
+`contactSave` and `contactRevert` functions don't have to be there in javascript if we don't need the returned promise.
+In typescript, we need them cause of type cheking.

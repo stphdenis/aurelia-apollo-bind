@@ -1,0 +1,39 @@
+{
+  "name": "aurelia-apollo-bind",
+  "version": "1.0.1",
+  "description": "Bind properties with apollo queries (graphql) with decorators",
+  "main": "dist/commonjs/index.js",
+  "types": "dist/commonjs/index.d.ts",
+  "typings": "dist/commonjs/index.d.ts",
+  "scripts": {
+    "start": "npm run build:amd && npm run build:commonjs && npm run build:es2015 && npm run build:es6 && npm run build:system && npm run build:umd",
+    "build:amd": "tsc --module amd --outFile dist/amd/amd.js",
+    "build:commonjs": "tsc --module commonjs --outDir dist/commonjs",
+    "build:es2015": "tsc --module commonjs --outDir dist/es2015",
+    "build:es6": "tsc --module commonjs --outDir dist/es6",
+    "build:system": "tsc --module system --outFile dist/system/system.js",
+    "build:umd": "tsc --module umd --outDir dist/umd",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stphdenis/aurelia-apollo-bind.git"
+  },
+  "keywords": [
+    "apollo",
+    "graphql",
+    "aurelia"
+  ],
+  "author": "Denis Stéphane",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stphdenis/aurelia-apollo-bind/issues"
+  },
+  "homepage": "https://github.com/stphdenis/aurelia-apollo-bind#readme",
+  "dependencies": {
+    "apollo-client": "^0.5.25",
+    "aurelia-framework": "^1.0.8",
+    "graphql": "^0.8.2",
+    "graphql-tag": "^1.1.2"
+  }
+}

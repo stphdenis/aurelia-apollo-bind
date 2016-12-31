@@ -2,7 +2,7 @@
 
 This module help using `Apollo` queries by binding properties with decorators.
 
-You can `query`, `subscribe` and use an other property for the parameters.
+You can `query` or `subscribe` and use an other property for the parameters.
 Any time a parameter change, a new query is done.
 
 ## Initialisation

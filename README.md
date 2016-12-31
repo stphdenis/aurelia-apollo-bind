@@ -93,7 +93,7 @@ mutation saveContact($id: ID, ...) {
   }
 
   detailsSave(datas: Promise<{newData, oldData}>) {
-    datas.then(datas => console.info('newData, oldData :', datas.newData, datas.oldData));
+    datas.then((newData, oldData) => console.info('newData, oldData :', newData, oldData));
   }
   detailsRevert() {}
 }

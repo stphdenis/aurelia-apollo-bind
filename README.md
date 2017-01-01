@@ -59,11 +59,36 @@ query contactDetails($id: ID) {
 }
 ```
 
+## Subscription mode
+
+```typescript
+import { ApolloBind, SubscriptionMode } from 'aurelia-apollo-bind';
+import gql from 'graphql-tag';
+
+export class ContactList {
+  @ApolloBind.subscribe(gql`
+query contactList {
+  contactList {
+    id
+    ...
+  }
+}`, SubscriptionMode.local)
+  contacts;
+}
+```
+
+If you're pulling the server and don't use `ws` then the `SubscriptionMode` can help you to force the sync of your app only locally for this query.
+
 ## TODO
 
+ - decorate the class to have general default class inits (pulling time, SubscriptionMode)
+ - Init the module to force defaults (by default, pulling timing is 500ms and SubscriptionMode is remote)
  - Parameter can be an object
- - subscribe is locally only
+ - have SubscriptionMode.local with `ws` too
+ - have a decorator like `@ApolloBind.local` to replace `SubscriptionMode.local`
  - make update similar to the query way with `save` and `revert` functionalities.
+
+Any suggestion is welcome !
 
 ## Update proposition
 

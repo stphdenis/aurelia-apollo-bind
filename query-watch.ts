@@ -1,7 +1,7 @@
 import ApolloClient, { Subscription } from 'apollo-client';
 import { BindingEngine, Container, Disposable } from 'aurelia-framework';
 
-import { callApolloUpdate, ViewModelQuery } from './apollo-bind';
+import { callApolloUpdate, SubscriptionMode, ViewModelQuery } from './apollo-bind';
 
 export class QueryWatch {
   private apolloClient = Container.instance.get(ApolloClient);
@@ -12,7 +12,9 @@ export class QueryWatch {
 
   constructor(propertyOwner: Object, viewModelQuery: ViewModelQuery) {
     const watchQuery = this.apolloClient.watchQuery({ query: viewModelQuery.gql });
-//    watchQuery.startPolling(500);
+    if(viewModelQuery.subscriptionMode === SubscriptionMode.remote) {
+      watchQuery.startPolling(500);
+    }
     if (viewModelQuery.variables_propertyName) {
       watchQuery.setVariables({ id: propertyOwner[viewModelQuery.variables_propertyName] });
       this.bindingEngine.propertyObserver(propertyOwner, viewModelQuery.variables_propertyName)

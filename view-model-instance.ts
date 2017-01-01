@@ -1,4 +1,4 @@
-import { QueryTypeEnum, ViewModelQuery } from './apollo-bind';
+import { QueryType, ViewModelQuery } from './apollo-bind';
 import { QueryQuery } from './query-query';
 import { QueryWatch } from './query-watch';
 
@@ -8,10 +8,10 @@ export class ViewModelInstance {
   constructor(private viewModelPrototype: Object, private propertyOwner: Object, viewModelQueries: ViewModelQuery[]) {
     viewModelQueries.forEach(viewModelQuery => {
       switch (viewModelQuery.type) {
-        case QueryTypeEnum.subscribe:
+        case QueryType.subscribe:
           this.queries.add(new QueryWatch(propertyOwner, viewModelQuery));
           break;
-        case QueryTypeEnum.query:
+        case QueryType.query:
           this.queries.add(new QueryQuery(propertyOwner, viewModelQuery));
           break;
         default:

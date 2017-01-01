@@ -80,7 +80,9 @@ System.register("query-watch", ["apollo-client", "aurelia-framework", "apollo-bi
                     this.watchQuerySubscriptions = new Map();
                     this.propertyObserverDisposables = new Set();
                     var watchQuery = this.apolloClient.watchQuery({ query: viewModelQuery.gql });
-                    //    watchQuery.startPolling(500);
+                    if (viewModelQuery.subscriptionMode === apollo_bind_2.SubscriptionMode.remote) {
+                        watchQuery.startPolling(500);
+                    }
                     if (viewModelQuery.variables_propertyName) {
                         watchQuery.setVariables({ id: propertyOwner[viewModelQuery.variables_propertyName] });
                         this.bindingEngine.propertyObserver(propertyOwner, viewModelQuery.variables_propertyName)
@@ -131,10 +133,10 @@ System.register("view-model-instance", ["apollo-bind", "query-query", "query-wat
                     this.queries = new Set();
                     viewModelQueries.forEach(function (viewModelQuery) {
                         switch (viewModelQuery.type) {
-                            case apollo_bind_3.QueryTypeEnum.subscribe:
+                            case apollo_bind_3.QueryType.subscribe:
                                 _this.queries.add(new query_watch_1.QueryWatch(propertyOwner, viewModelQuery));
                                 break;
-                            case apollo_bind_3.QueryTypeEnum.query:
+                            case apollo_bind_3.QueryType.query:
                                 _this.queries.add(new query_query_1.QueryQuery(propertyOwner, viewModelQuery));
                                 break;
                             default:
@@ -214,15 +216,13 @@ System.register("apollo-bind", ["view-model-class"], function (exports_5, contex
     function callApolloUpdate(propertyOwner, propertyName, newValue) {
         var oldValue = propertyOwner[propertyName];
         propertyOwner[propertyName] = newValue;
-        console.info('ApolloBind - callApolloUpdate - propertyName, propertyOwner :', propertyName, propertyOwner);
-        console.info('ApolloBind - callApolloUpdate - newValue, oldValue :', newValue, oldValue);
         var apolloUpdateToCall = propertyOwner['apolloUpdate'];
         if (apolloUpdateToCall) {
             apolloUpdateToCall.call(propertyOwner, propertyName, newValue, oldValue);
         }
     }
     exports_5("callApolloUpdate", callApolloUpdate);
-    var view_model_class_1, QueryTypeEnum, ApolloBind;
+    var view_model_class_1, SubscriptionMode, QueryType, ApolloBind;
     return {
         setters: [
             function (view_model_class_1_1) {
@@ -230,34 +230,62 @@ System.register("apollo-bind", ["view-model-class"], function (exports_5, contex
             }
         ],
         execute: function () {
-            (function (QueryTypeEnum) {
-                QueryTypeEnum[QueryTypeEnum["subscribe"] = 0] = "subscribe";
-                QueryTypeEnum[QueryTypeEnum["query"] = 1] = "query";
-            })(QueryTypeEnum || (QueryTypeEnum = {}));
-            exports_5("QueryTypeEnum", QueryTypeEnum);
+            (function (SubscriptionMode) {
+                SubscriptionMode[SubscriptionMode["remote"] = 0] = "remote";
+                SubscriptionMode[SubscriptionMode["local"] = 1] = "local";
+            })(SubscriptionMode || (SubscriptionMode = {}));
+            exports_5("SubscriptionMode", SubscriptionMode);
+            ;
+            (function (QueryType) {
+                QueryType[QueryType["subscribe"] = 0] = "subscribe";
+                QueryType[QueryType["query"] = 1] = "query";
+            })(QueryType || (QueryType = {}));
+            exports_5("QueryType", QueryType);
             ;
             ApolloBind = (function () {
                 function ApolloBind() {
                 }
-                ApolloBind.subscribe = function (document, variables_propertyName) {
+                ApolloBind.subscribe = function (document, variables_propertyName, subscriptionMode) {
+                    var _variables_propertyName;
+                    var _subscriptionMode;
+                    if (subscriptionMode) {
+                        _variables_propertyName = variables_propertyName;
+                        _subscriptionMode = subscriptionMode;
+                    }
+                    else {
+                        if (typeof variables_propertyName === 'string') {
+                            _variables_propertyName = variables_propertyName;
+                            _subscriptionMode = SubscriptionMode.remote;
+                        }
+                        else if (variables_propertyName !== undefined) {
+                            _variables_propertyName = undefined;
+                            _subscriptionMode = variables_propertyName;
+                        }
+                        else {
+                            _variables_propertyName = undefined;
+                            _subscriptionMode = SubscriptionMode.remote;
+                        }
+                    }
                     return function (viewModelPrototype, propertyName) {
                         ApolloBind.initViewModel(viewModelPrototype, {
-                            type: QueryTypeEnum.subscribe,
+                            type: QueryType.subscribe,
                             name: ApolloBind.getQueryName(document),
                             gql: document,
                             propertyName: propertyName,
-                            variables_propertyName: variables_propertyName,
+                            variables_propertyName: _variables_propertyName,
+                            subscriptionMode: _subscriptionMode,
                         });
                     };
                 };
                 ApolloBind.query = function (document, variables_propertyName) {
                     return function (viewModelPrototype, propertyName) {
                         ApolloBind.initViewModel(viewModelPrototype, {
-                            type: QueryTypeEnum.query,
+                            type: QueryType.query,
                             name: ApolloBind.getQueryName(document),
                             gql: document,
                             propertyName: propertyName,
                             variables_propertyName: variables_propertyName,
+                            subscriptionMode: SubscriptionMode.remote,
                         });
                     };
                 };
@@ -287,7 +315,8 @@ System.register("index", ["apollo-bind"], function (exports_6, context_6) {
         setters: [
             function (apollo_bind_4_1) {
                 exports_6({
-                    "ApolloBind": apollo_bind_4_1["ApolloBind"]
+                    "ApolloBind": apollo_bind_4_1["ApolloBind"],
+                    "SubscriptionMode": apollo_bind_4_1["SubscriptionMode"]
                 });
             }
         ],

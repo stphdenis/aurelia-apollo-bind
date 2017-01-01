@@ -10,10 +10,10 @@ var ViewModelInstance = (function () {
         this.queries = new Set();
         viewModelQueries.forEach(function (viewModelQuery) {
             switch (viewModelQuery.type) {
-                case apollo_bind_1.QueryTypeEnum.subscribe:
+                case apollo_bind_1.QueryType.subscribe:
                     _this.queries.add(new query_watch_1.QueryWatch(propertyOwner, viewModelQuery));
                     break;
-                case apollo_bind_1.QueryTypeEnum.query:
+                case apollo_bind_1.QueryType.query:
                     _this.queries.add(new query_query_1.QueryQuery(propertyOwner, viewModelQuery));
                     break;
                 default:

@@ -17,7 +17,9 @@
             this.watchQuerySubscriptions = new Map();
             this.propertyObserverDisposables = new Set();
             var watchQuery = this.apolloClient.watchQuery({ query: viewModelQuery.gql });
-            //    watchQuery.startPolling(500);
+            if (viewModelQuery.subscriptionMode === apollo_bind_1.SubscriptionMode.remote) {
+                watchQuery.startPolling(500);
+            }
             if (viewModelQuery.variables_propertyName) {
                 watchQuery.setVariables({ id: propertyOwner[viewModelQuery.variables_propertyName] });
                 this.bindingEngine.propertyObserver(propertyOwner, viewModelQuery.variables_propertyName)

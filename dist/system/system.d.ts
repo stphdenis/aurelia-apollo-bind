@@ -42,20 +42,25 @@ declare module "view-model-class" {
 }
 declare module "apollo-bind" {
     import { Document } from 'graphql';
-    export enum QueryTypeEnum {
+    export enum SubscriptionMode {
+        remote = 0,
+        local = 1,
+    }
+    export enum QueryType {
         subscribe = 0,
         query = 1,
     }
     export type ViewModelQuery = {
-        type: QueryTypeEnum;
+        type: QueryType;
         name: string;
         gql: Document;
         propertyName: string;
         variables_propertyName: string | undefined;
+        subscriptionMode: SubscriptionMode;
     };
     export function callApolloUpdate(propertyOwner: Object, propertyName: string, newValue: any): void;
     export class ApolloBind {
-        static subscribe(document: Document, variables_propertyName?: string): any;
+        static subscribe(document: Document, variables_propertyName?: string | SubscriptionMode, subscriptionMode?: SubscriptionMode): any;
         static query(document: Document, variables_propertyName?: string): any;
         private static viewModelClasses;
         private static getQueryName(document);
@@ -63,5 +68,5 @@ declare module "apollo-bind" {
     }
 }
 declare module "index" {
-    export { ApolloBind } from "apollo-bind";
+    export { ApolloBind, SubscriptionMode } from "apollo-bind";
 }

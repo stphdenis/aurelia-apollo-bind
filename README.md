@@ -1,6 +1,6 @@
 # aurelia-apollo-bind
 
-***Please change `subscribe` by `watch` and `SubscriptionMode` by `WatchMode` bigining with version `1.0.4`.***
+***Please change `subscribe` by `watch` and `SubscriptionMode` by `WatchMode` bigining with version `1.1.0`.***
 
 This module help using `Apollo` queries by binding properties with decorators.
 

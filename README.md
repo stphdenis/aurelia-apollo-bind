@@ -1,8 +1,10 @@
 # aurelia-apollo-bind
 
+***Please change `subscribe` by `watch` and `SubscriptionMode` by `WatchMode` bigining with version `1.0.4`.***
+
 This module help using `Apollo` queries by binding properties with decorators.
 
-You can `query` or `subscribe` and use an other property for the parameters.
+You can `query` or `watch` and use an other property for the parameters.
 Any time a parameter change, a new query is done.
 
 ## Initialisation
@@ -36,7 +38,7 @@ query contactList {
 }
 ```
 
-By just changing `query` by `subscribe`, your query will be updated each time an update is done locally or from the server or from an other client.
+By just changing `query` by `watch`, your query will be updated each time an update is done locally or from the server or from an other client.
 
 ## Parameters
 
@@ -59,33 +61,32 @@ query contactDetails($id: ID) {
 }
 ```
 
-## Subscription mode
+## Watch mode
 
 ```typescript
-import { ApolloBind, SubscriptionMode } from 'aurelia-apollo-bind';
+import { ApolloBind, WatchMode } from 'aurelia-apollo-bind';
 import gql from 'graphql-tag';
 
 export class ContactList {
-  @ApolloBind.subscribe(gql`
+  @ApolloBind.watch(gql`
 query contactList {
   contactList {
     id
     ...
   }
-}`, SubscriptionMode.local)
+}`, WatchMode.local)
   contacts;
 }
 ```
 
-If you're pulling the server and don't use `ws` then the `SubscriptionMode` can help you to force the sync of your app only locally for this query.
+If you're pulling the server and don't use `ws` then the `WatchMode` can help you to force the sync of your app only locally for this query.
 
 ## TODO
 
- - decorate the class to have general default class inits (pulling time, SubscriptionMode)
- - Init the module to force defaults (by default, pulling timing is 500ms and SubscriptionMode is remote)
+ - decorate the class to have general default class inits (pulling time, WatchMode)
+ - Init the module to force defaults (by default, pulling timing is 500ms and WatchMode is remote)
  - Parameter can be an object
- - have SubscriptionMode.local with `ws` too
- - have a decorator like `@ApolloBind.local` to replace `SubscriptionMode.local`
+ - have a decorator like `@ApolloBind.local` to replace `WatchMode.local`
  - make update similar to the query way with `save` and `revert` functionalities.
 
 Any suggestion is welcome !

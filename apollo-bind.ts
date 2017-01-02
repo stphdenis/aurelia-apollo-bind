@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 
 import { ViewModelClass } from './view-model-class';
 
-export enum SubscriptionMode { remote, local };
+export enum WatchMode { remote, local };
 export enum QueryType { subscribe, query };
 export type ViewModelQuery = {
   type: QueryType,
@@ -13,7 +13,7 @@ export type ViewModelQuery = {
   gql: Document,
   propertyName: string,
   variables_propertyName: string|undefined,
-  subscriptionMode: SubscriptionMode,
+  watchMode: WatchMode,
 };
 type ViewModelType = {};
 
@@ -27,22 +27,22 @@ export function callApolloUpdate(propertyOwner: Object, propertyName: string, ne
 }
 
 export class ApolloBind {
-  static subscribe(document: Document, variables_propertyName?: string|SubscriptionMode, subscriptionMode?: SubscriptionMode): any {
+  static subscribe(document: Document, variables_propertyName?: string|WatchMode, watchMode?: WatchMode): any {
     let _variables_propertyName: string|undefined;
-    let _subscriptionMode: SubscriptionMode;
-    if(subscriptionMode) {
+    let _watchMode: WatchMode;
+    if(watchMode) {
       _variables_propertyName = variables_propertyName as string|undefined;
-      _subscriptionMode = subscriptionMode;
+      _watchMode = watchMode;
     } else {
       if(typeof variables_propertyName === 'string') {
         _variables_propertyName = variables_propertyName;
-        _subscriptionMode = SubscriptionMode.remote;
+        _watchMode = WatchMode.remote;
       } else if(variables_propertyName !== undefined) {
         _variables_propertyName = undefined;
-        _subscriptionMode = variables_propertyName as SubscriptionMode;
+        _watchMode = variables_propertyName as WatchMode;
       } else {
         _variables_propertyName = undefined;
-        _subscriptionMode = SubscriptionMode.remote;
+        _watchMode = WatchMode.remote;
       }
     }
     return (viewModelPrototype: Object, propertyName: string) => {
@@ -52,7 +52,7 @@ export class ApolloBind {
         gql: document,
         propertyName,
         variables_propertyName: _variables_propertyName,
-        subscriptionMode: _subscriptionMode,
+        watchMode: _watchMode,
       });
     };
   }
@@ -65,7 +65,7 @@ export class ApolloBind {
         gql: document,
         propertyName,
         variables_propertyName,
-        subscriptionMode: SubscriptionMode.remote,
+        watchMode: WatchMode.remote,
       });
     };
   }

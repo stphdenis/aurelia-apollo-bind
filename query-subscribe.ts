@@ -3,18 +3,15 @@ import { BindingEngine, Container, Disposable } from 'aurelia-framework';
 
 import { callApolloUpdate, WatchMode, ViewModelQuery } from './apollo-bind';
 
-export class QueryWatch {
-  private apolloClient = Container.instance.get(ApolloClient);
-  private bindingEngine = Container.instance.get(BindingEngine);
-
-  private watchQuerySubscriptions: Map<string, Subscription> = new Map();
-  private propertyObserverDisposables: Set<Disposable> = new Set();
+export class QuerySubscribe {
+  private apolloClient: ApolloClient = Container.instance.get(ApolloClient);
+  private bindingEngine: BindingEngine = Container.instance.get(BindingEngine);
 
   constructor(propertyOwner: Object, viewModelQuery: ViewModelQuery) {
-    const watchQuery = this.apolloClient.watchQuery({ query: viewModelQuery.gql });
-    if(viewModelQuery.watchMode === WatchMode.remote) {
-      watchQuery.startPolling(500);
-    }
+    const subscribeQuery = this.apolloClient.subscribe({ query: viewModelQuery.gql });
+//    if(viewModelQuery.subscriptionMode === SubscriptionMode.remote) {
+//      watchQuery.startPolling(500);
+//    }
     if (viewModelQuery.variables_propertyName) {
       watchQuery.setVariables({ id: propertyOwner[viewModelQuery.variables_propertyName] });
       this.bindingEngine.propertyObserver(propertyOwner, viewModelQuery.variables_propertyName)
@@ -22,7 +19,7 @@ export class QueryWatch {
           watchQuery.refetch({ id: newValue });
         });
     }
-    const subscription = watchQuery.subscribe({
+    const subscription = subscribeQuery.subscribe({
       next(response: {data: any[]}): void {
         callApolloUpdate(propertyOwner, viewModelQuery.propertyName, response.data[viewModelQuery.name]);
       },

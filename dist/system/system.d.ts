@@ -42,7 +42,7 @@ declare module "view-model-class" {
 }
 declare module "apollo-bind" {
     import { Document } from 'graphql';
-    export enum SubscriptionMode {
+    export enum WatchMode {
         remote = 0,
         local = 1,
     }
@@ -56,11 +56,11 @@ declare module "apollo-bind" {
         gql: Document;
         propertyName: string;
         variables_propertyName: string | undefined;
-        subscriptionMode: SubscriptionMode;
+        watchMode: WatchMode;
     };
     export function callApolloUpdate(propertyOwner: Object, propertyName: string, newValue: any): void;
     export class ApolloBind {
-        static subscribe(document: Document, variables_propertyName?: string | SubscriptionMode, subscriptionMode?: SubscriptionMode): any;
+        static subscribe(document: Document, variables_propertyName?: string | WatchMode, watchMode?: WatchMode): any;
         static query(document: Document, variables_propertyName?: string): any;
         private static viewModelClasses;
         private static getQueryName(document);
@@ -68,5 +68,14 @@ declare module "apollo-bind" {
     }
 }
 declare module "index" {
-    export { ApolloBind, SubscriptionMode } from "apollo-bind";
+    export { ApolloBind, WatchMode } from "apollo-bind";
+}
+declare module "query-subscribe" {
+    import { ViewModelQuery } from "apollo-bind";
+    export class QuerySubscribe {
+        private apolloClient;
+        private bindingEngine;
+        constructor(propertyOwner: Object, viewModelQuery: ViewModelQuery);
+        destruct(): void;
+    }
 }

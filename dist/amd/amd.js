@@ -48,7 +48,7 @@ define("query-watch", ["require", "exports", "apollo-client", "aurelia-framework
             this.watchQuerySubscriptions = new Map();
             this.propertyObserverDisposables = new Set();
             var watchQuery = this.apolloClient.watchQuery({ query: viewModelQuery.gql });
-            if (viewModelQuery.subscriptionMode === apollo_bind_2.SubscriptionMode.remote) {
+            if (viewModelQuery.watchMode === apollo_bind_2.WatchMode.remote) {
                 watchQuery.startPolling(500);
             }
             if (viewModelQuery.variables_propertyName) {
@@ -150,11 +150,11 @@ define("view-model-class", ["require", "exports", "view-model-instance"], functi
 });
 define("apollo-bind", ["require", "exports", "view-model-class"], function (require, exports, view_model_class_1) {
     "use strict";
-    var SubscriptionMode;
-    (function (SubscriptionMode) {
-        SubscriptionMode[SubscriptionMode["remote"] = 0] = "remote";
-        SubscriptionMode[SubscriptionMode["local"] = 1] = "local";
-    })(SubscriptionMode = exports.SubscriptionMode || (exports.SubscriptionMode = {}));
+    var WatchMode;
+    (function (WatchMode) {
+        WatchMode[WatchMode["remote"] = 0] = "remote";
+        WatchMode[WatchMode["local"] = 1] = "local";
+    })(WatchMode = exports.WatchMode || (exports.WatchMode = {}));
     ;
     var QueryType;
     (function (QueryType) {
@@ -174,25 +174,25 @@ define("apollo-bind", ["require", "exports", "view-model-class"], function (requ
     var ApolloBind = (function () {
         function ApolloBind() {
         }
-        ApolloBind.subscribe = function (document, variables_propertyName, subscriptionMode) {
+        ApolloBind.subscribe = function (document, variables_propertyName, watchMode) {
             var _variables_propertyName;
-            var _subscriptionMode;
-            if (subscriptionMode) {
+            var _watchMode;
+            if (watchMode) {
                 _variables_propertyName = variables_propertyName;
-                _subscriptionMode = subscriptionMode;
+                _watchMode = watchMode;
             }
             else {
                 if (typeof variables_propertyName === 'string') {
                     _variables_propertyName = variables_propertyName;
-                    _subscriptionMode = SubscriptionMode.remote;
+                    _watchMode = WatchMode.remote;
                 }
                 else if (variables_propertyName !== undefined) {
                     _variables_propertyName = undefined;
-                    _subscriptionMode = variables_propertyName;
+                    _watchMode = variables_propertyName;
                 }
                 else {
                     _variables_propertyName = undefined;
-                    _subscriptionMode = SubscriptionMode.remote;
+                    _watchMode = WatchMode.remote;
                 }
             }
             return function (viewModelPrototype, propertyName) {
@@ -202,7 +202,7 @@ define("apollo-bind", ["require", "exports", "view-model-class"], function (requ
                     gql: document,
                     propertyName: propertyName,
                     variables_propertyName: _variables_propertyName,
-                    subscriptionMode: _subscriptionMode,
+                    watchMode: _watchMode,
                 });
             };
         };
@@ -214,7 +214,7 @@ define("apollo-bind", ["require", "exports", "view-model-class"], function (requ
                     gql: document,
                     propertyName: propertyName,
                     variables_propertyName: variables_propertyName,
-                    subscriptionMode: SubscriptionMode.remote,
+                    watchMode: WatchMode.remote,
                 });
             };
         };
@@ -238,6 +238,39 @@ define("apollo-bind", ["require", "exports", "view-model-class"], function (requ
 define("index", ["require", "exports", "apollo-bind"], function (require, exports, apollo_bind_4) {
     "use strict";
     exports.ApolloBind = apollo_bind_4.ApolloBind;
-    exports.SubscriptionMode = apollo_bind_4.SubscriptionMode;
+    exports.WatchMode = apollo_bind_4.WatchMode;
+});
+define("query-subscribe", ["require", "exports", "apollo-client", "aurelia-framework"], function (require, exports, apollo_client_3, aurelia_framework_3) {
+    "use strict";
+    var QuerySubscribe = (function () {
+        function QuerySubscribe(propertyOwner, viewModelQuery) {
+            this.apolloClient = aurelia_framework_3.Container.instance.get(apollo_client_3.default);
+            this.bindingEngine = aurelia_framework_3.Container.instance.get(aurelia_framework_3.BindingEngine);
+            var subscribeQuery;
+            if (viewModelQuery.variables_propertyName) {
+                subscribeQuery = this.apolloClient.subscribe({
+                    query: viewModelQuery.gql,
+                    variables: propertyOwner[viewModelQuery.variables_propertyName],
+                });
+            }
+            else {
+                subscribeQuery = this.apolloClient.subscribe({ query: viewModelQuery.gql });
+            }
+            var subscription = subscribeQuery.subscribe({
+                next: function (response) {
+                    console.error('subscribeQuery.subscribe - :', response.data);
+                    //        callApolloUpdate(propertyOwner, viewModelQuery.propertyName, response.data[viewModelQuery.name]);
+                },
+                error: function (error) { console.error(viewModelQuery.name + 'Query error(error):', error); },
+            });
+            //    this.subscribeSubscriptions.set(viewModelQuery.propertyName, subscription);
+        }
+        QuerySubscribe.prototype.destruct = function () {
+            //    this.subscribeSubscriptions.forEach(subscription => subscription.unsubscribe());
+            //    this.propertyObserverDisposables.forEach(disposable => disposable.dispose());
+        };
+        return QuerySubscribe;
+    }());
+    exports.QuerySubscribe = QuerySubscribe;
 });
 //# sourceMappingURL=amd.js.map

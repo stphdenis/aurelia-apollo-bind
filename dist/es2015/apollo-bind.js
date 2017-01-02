@@ -1,10 +1,10 @@
 "use strict";
 var view_model_class_1 = require("./view-model-class");
-var SubscriptionMode;
-(function (SubscriptionMode) {
-    SubscriptionMode[SubscriptionMode["remote"] = 0] = "remote";
-    SubscriptionMode[SubscriptionMode["local"] = 1] = "local";
-})(SubscriptionMode = exports.SubscriptionMode || (exports.SubscriptionMode = {}));
+var WatchMode;
+(function (WatchMode) {
+    WatchMode[WatchMode["remote"] = 0] = "remote";
+    WatchMode[WatchMode["local"] = 1] = "local";
+})(WatchMode = exports.WatchMode || (exports.WatchMode = {}));
 ;
 var QueryType;
 (function (QueryType) {
@@ -24,25 +24,25 @@ exports.callApolloUpdate = callApolloUpdate;
 var ApolloBind = (function () {
     function ApolloBind() {
     }
-    ApolloBind.subscribe = function (document, variables_propertyName, subscriptionMode) {
+    ApolloBind.subscribe = function (document, variables_propertyName, watchMode) {
         var _variables_propertyName;
-        var _subscriptionMode;
-        if (subscriptionMode) {
+        var _watchMode;
+        if (watchMode) {
             _variables_propertyName = variables_propertyName;
-            _subscriptionMode = subscriptionMode;
+            _watchMode = watchMode;
         }
         else {
             if (typeof variables_propertyName === 'string') {
                 _variables_propertyName = variables_propertyName;
-                _subscriptionMode = SubscriptionMode.remote;
+                _watchMode = WatchMode.remote;
             }
             else if (variables_propertyName !== undefined) {
                 _variables_propertyName = undefined;
-                _subscriptionMode = variables_propertyName;
+                _watchMode = variables_propertyName;
             }
             else {
                 _variables_propertyName = undefined;
-                _subscriptionMode = SubscriptionMode.remote;
+                _watchMode = WatchMode.remote;
             }
         }
         return function (viewModelPrototype, propertyName) {
@@ -52,7 +52,7 @@ var ApolloBind = (function () {
                 gql: document,
                 propertyName: propertyName,
                 variables_propertyName: _variables_propertyName,
-                subscriptionMode: _subscriptionMode,
+                watchMode: _watchMode,
             });
         };
     };
@@ -64,7 +64,7 @@ var ApolloBind = (function () {
                 gql: document,
                 propertyName: propertyName,
                 variables_propertyName: variables_propertyName,
-                subscriptionMode: SubscriptionMode.remote,
+                watchMode: WatchMode.remote,
             });
         };
     };

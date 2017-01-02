@@ -1,1 +1,1 @@
-export { ApolloBind, SubscriptionMode } from './apollo-bind';
+export { ApolloBind, WatchMode } from './apollo-bind';
